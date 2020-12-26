@@ -56,3 +56,11 @@ aws ecr get-login-password --region eu-central-1 | docker login \
 ```bash
 docker push <repository_url>:<tag> 
 ```
+
+### Create ALB, via Cloudformation template:
+
+```bash
+aws cloudformation create-stack \
+--stack-name external-alb \
+--template-body file://./alb-external.yml
+```
