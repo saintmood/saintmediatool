@@ -1,0 +1,10 @@
+version: "3.7"
+
+services:
+  api:
+    container_name: api
+    build: 
+      context: .
+      dockerfile: ./deployment/docker/application_dockerfile
+    ports:
+      - "8000:8000"
