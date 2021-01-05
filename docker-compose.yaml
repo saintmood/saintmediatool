@@ -2,9 +2,15 @@ version: "3.7"
 
 services:
   api:
-    container_name: api
+    container_name: "api"
+    user: "${UID}:${GID}"
     build: 
       context: .
       dockerfile: ./deployment/docker/application_dockerfile
     ports:
       - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./:/opt/saintmtool
+

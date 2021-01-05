@@ -1,0 +1,14 @@
+FROM python:latest AS build-stage
+
+ADD . /opt/saintmtool
+WORKDIR /opt/saintmtool 
+RUN pip install --upgrade pip
+RUN pip install -r requirements/development.txt
+RUN pyinstaller -w -F\
+    --noconfirm \
+    application/main.py
+
+FROM debian:buster-slim AS deploy-stage
+COPY --from=build-stage /opt/saintmtool/dist/main /main
+EXPOSE  8000
+CMD ["/main"]
