@@ -1,12 +1,11 @@
 FROM python:latest
-ARG USERNAME=developer
-RUN useradd -m $USERNAME
-ENV HOME /home/$USERNAME
 
-ADD . /opt/saintmtool
-WORKDIR /opt/saintmtool 
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+ADD . /saintmtool
+WORKDIR /saintmtool 
 RUN pip install --upgrade pip
 RUN pip install -r requirements/development.txt
+RUN pip install -r requirements/test.txt
 EXPOSE  8000
-USER $USERNAME
-CMD ["uvicorn", "application.main:app", "--reload", "--host=0.0.0.0", "--port=8000"]

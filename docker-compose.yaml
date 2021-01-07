@@ -2,15 +2,13 @@ version: "3.7"
 
 services:
   api:
-    container_name: "api"
-    user: "${UID}:${GID}"
     build: 
       context: .
       dockerfile: ./deployment/docker/application_dockerfile
+    command: uvicorn application.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    container_name: "api"
     ports:
       - "8000:8000"
-    env_file:
-      - .env
     volumes:
       - ./:/opt/saintmtool
 
