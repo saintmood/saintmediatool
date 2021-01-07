@@ -1,10 +1,10 @@
-from fastapi.testclient import TestClient
-
-from application.main import app
+from .base import BaseTestCase
 
 
-client = TestClient(app)
+class ImageUploadTestCase(BaseTestCase):
 
-def test_read_item():
-    response = client.get("/items/foo", headers={"X-Token": "coneofsilence"})
-    assert response.status_code == 200
+    endpoint_url = '/api/v1/image/upload'
+
+    def test_upload_image_success(self):
+        response = self.client.post(self.endpoint_url)
+        self.assertEqual(response.status_code, 201)

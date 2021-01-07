@@ -10,5 +10,5 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./:/opt/saintmtool
+      - ./:/saintmtool
 
