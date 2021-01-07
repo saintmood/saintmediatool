@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from starlette.requests import Request
 
+from application.routers import upload
+
 
 app = FastAPI()
-
-
-@app.get('/ecs/test/')
-async def test(request: Request):
-    return {'ip': request.client.host}
+app.include_router(upload.router)
