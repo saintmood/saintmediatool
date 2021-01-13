@@ -3,7 +3,7 @@ FROM python:latest AS build-stage
 ADD . /opt/saintmtool
 WORKDIR /opt/saintmtool 
 RUN pip install --upgrade pip
-RUN pip install -r requirements/development.txt
+RUN pip install -r requirements/production.txt
 RUN pyinstaller -w -F\
     --noconfirm \
     application/main.py
