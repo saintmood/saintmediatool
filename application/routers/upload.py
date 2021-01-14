@@ -2,15 +2,13 @@ import boto3
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, File, UploadFile
 
-from ..settings import settings
+from ..settings import settings, Settings
 
-router = APIRouter(prefix='/upload', dependencies=[Depends(settings)])
+router = APIRouter(prefix='/upload')
 
 
 @router.post('/images/', status_code=201)
-async def upload_image(
-    upload:UploadFile=File(...)
-):
+async def upload_image(upload:UploadFile=File(...), settings:Settings=Depends(settings)):
     s3_client = boto3.client('s3')
     bucket_name = 'saintmtool'
     s3_client.upload_fileobj(upload.file, bucket_name, upload.filename)

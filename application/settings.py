@@ -3,7 +3,8 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
 
-    media_bucket_name: str = None
+    media_bucket_name: str = 'saintmtool'
 
 
-settings = Settings
+def settings() -> Settings:
+    return Settings()
