@@ -2,3 +2,6 @@
 
 requests
 faker
+moto
+coverage
+pylint
