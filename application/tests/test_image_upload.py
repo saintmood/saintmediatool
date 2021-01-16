@@ -1,7 +1,9 @@
 import boto3
 from moto import mock_s3
 
+from application.routers import upload
 from application.tests import fixtures
+
 from .base import BaseTestCase
 
 
@@ -12,7 +14,7 @@ class ImageUploadTestCase(BaseTestCase):
     @mock_s3
     def test_upload_image_success(self):
         conn = boto3.resource('s3')
-        conn.create_bucket(Bucket='saintmtool')
+        conn.create_bucket(Bucket=self.settings.media_bucket_name)
         test_image = fixtures.create_test_image()
         expected_url = 'http://saintmtool/media/pictures/picture_id'
         response = self.client.post(
