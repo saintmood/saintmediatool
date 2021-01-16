@@ -4,6 +4,7 @@ from pydantic import BaseSettings
 class Settings(BaseSettings):
     environment: str = 'development'
     media_bucket_name: str = 'saintmtool'
+    domain: str = 'localhost'
 
 
 class TestSettings(Settings):

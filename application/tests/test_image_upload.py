@@ -1,3 +1,5 @@
+from unittest import mock
+
 import boto3
 from moto import mock_s3
 
@@ -12,7 +14,9 @@ class ImageUploadTestCase(BaseTestCase):
     endpoint_url = '/upload/images/'
 
     @mock_s3
-    def test_upload_image_success(self):
+    @mock.patch('application.internal.utils.generate_s3_key')
+    def test_upload_image_success(self, generate_s3_key_mock):
+        generate_s3_key_mock.return_value = 'aws_s3_bucket_key'
         conn = boto3.resource('s3')
         conn.create_bucket(Bucket=self.settings.media_bucket_name)
         test_image = fixtures.create_test_image()
