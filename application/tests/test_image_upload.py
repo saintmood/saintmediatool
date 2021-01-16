@@ -16,11 +16,12 @@ class ImageUploadTestCase(BaseTestCase):
     @mock_s3
     @mock.patch('application.internal.utils.generate_s3_key')
     def test_upload_image_success(self, generate_s3_key_mock):
-        generate_s3_key_mock.return_value = 'aws_s3_bucket_key'
+        picture_aws_key = 'aws_s3_bucket_key'
+        generate_s3_key_mock.return_value = picture_aws_key
         conn = boto3.resource('s3')
         conn.create_bucket(Bucket=self.settings.media_bucket_name)
         test_image = fixtures.create_test_image()
-        expected_url = 'http://saintmtool/media/pictures/picture_id'
+        expected_url = f'https://{self.settings.domain}/media/pictures/{picture_aws_key}/'
         response = self.client.post(
             self.endpoint_url, 
             headers={'AuthToken': 'sometokenvalue'},
