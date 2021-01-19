@@ -17,8 +17,8 @@ class ImagesRetriveTestCase(BaseTestCase):
     @mock_s3
     def test_retrive_images_success(self):
         response = self.client.get(
-            headers={'AuthToken': 'sometokenvalue'},
-            self.endpoint_url
+            self.endpoint_url,
+            headers={'AuthToken': 'sometokenvalue'}
         )
         self.assertEqual(response.status_code, 200)
 
@@ -29,8 +29,17 @@ class ImageRetriveTestCase(BaseTestCase):
     @mock_s3
     def test_retrive_single_image_success(self):
         expected_image_id = 'abc123'
+        conn = boto3.resource('s3')
+        conn.create_bucket(Bucket=self.settings.media_bucket_name)
+        test_image = fixtures.create_test_image()
+        s3_client = boto3.client('s3')
+        s3_client.upload_fileobj(test_image, self.settings.media_bucket_name, expected_image_id)
+
         response = self.client.get(
-            headers={'AuthToken': 'sometokenvalue'},
-            self.endpoint_url.format(image_id=expected_image_id)
+            self.endpoint_url.format(image_id=expected_image_id),
+            headers={'AuthToken': 'sometokenvalue'}
         )
         self.assertEqual(response.status_code, 200)
+        resp_json = response.json()
+        self.assertEqual(resp_json['status'], 'success')
+        self.assertIsNotNone(resp_json['data']['small'])
