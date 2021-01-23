@@ -43,3 +43,5 @@ class ImageRetriveTestCase(BaseTestCase):
         resp_json = response.json()
         self.assertEqual(resp_json['status'], 'success')
         self.assertIsNotNone(resp_json['data']['small'])
+        self.assertIsNotNone(resp_json['data']['medium'])
+        self.assertIsNotNone(resp_json['data']['large'])
