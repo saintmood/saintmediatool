@@ -3,7 +3,7 @@ from application.internal import utils
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends
 
-from application.internal.handlers import RetrieveSingleImageHandler
+from application.internal.handlers import RetrieveSingleImageHandler, ImageDimensionHandler
 from ..settings import Settings, settings
 
 router = APIRouter(prefix='/retrieve')
@@ -19,5 +19,7 @@ async def retrieve_images(settings:Settings=Depends(settings)):
 @router.get('/images/{image_id}/')
 async def retrieve_single_image(image_id:str, settings:Settings=Depends(settings)):
     retrieve_handler = RetrieveSingleImageHandler()
-    response = retrieve_handler.handle(image_id)
-    return {'status': 'success', 'data': {'small': response['small']}}
+    dimensions_handler = ImageDimensionHandler()
+    retrieve_handler.set_next(dimensions_handler)
+    small, medium, large = retrieve_handler.handle(image_id, settings.media_bucket_name)
+    return {'status': 'success', 'data': {'small': None}}
