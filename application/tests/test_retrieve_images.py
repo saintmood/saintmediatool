@@ -45,3 +45,18 @@ class ImageRetriveTestCase(BaseTestCase):
         self.assertIsNotNone(resp_json['data']['small'])
         self.assertIsNotNone(resp_json['data']['medium'])
         self.assertIsNotNone(resp_json['data']['large'])
+
+    @mock_s3
+    def test_retrive_single_image_not_found_error(self):
+        expected_image_id = 'abc123'
+        conn = boto3.resource('s3')
+        conn.create_bucket(Bucket=self.settings.media_bucket_name)
+
+        response = self.client.get(
+            self.endpoint_url.format(image_id=expected_image_id),
+            headers={'AuthToken': 'sometokenvalue'}
+        )
+        self.assertEqual(response.status_code, 200)
+        resp_json = response.json()
+        self.assertEqual(resp_json['status'], 'error')
+        self.assertIsNotNone(resp_json['data']['message'])
