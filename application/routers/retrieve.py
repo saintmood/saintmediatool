@@ -1,8 +1,10 @@
+import base64
+
 import boto3
-from application.internal import utils
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends
 
+from application.internal import utils
 from application.internal.handlers import RetrieveSingleImageHandler, ImageDimensionHandler
 from ..settings import Settings, settings
 
@@ -25,4 +27,8 @@ async def retrieve_single_image(image_id:str, settings:Settings=Depends(settings
         small, medium, large = retrieve_handler.handle(image_id, settings.media_bucket_name)
     except ClientError:
         return {'status': 'error', 'data': {'message': 'boto3 error'}}
-    return {'status': 'success', 'data': {'small': None}}
+    return {'status': 'success', 'data': {
+        'small': base64.b64encode(small.read()),
+        'medium': base64.b64encode(medium.read()), 
+        'large': base64.b64encode(large.read())}
+    }

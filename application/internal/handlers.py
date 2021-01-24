@@ -46,4 +46,13 @@ class ImageDimensionHandler(BaseHandler):
         small_image = image.resize((128, 128))
         medium_image = image.resize((450, 450))
         large_image = image.resize((960, 960))
-        return small_image, medium_image, large_image
+        small_image_io = io.BytesIO()
+        small_image.save(small_image_io, 'png')
+        medium_image_io = io.BytesIO()
+        medium_image.save(medium_image_io, 'png')
+        large_image_io = io.BytesIO()
+        large_image.save(large_image_io, 'png')
+        small_image_io.seek(0)
+        medium_image_io.seek(0)
+        large_image_io.seek(0)
+        return small_image_io, medium_image_io, large_image_io
