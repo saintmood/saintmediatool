@@ -4,6 +4,8 @@ import io
 import boto3
 from PIL import Image
 
+from application.internal import constants
+
 
 class BaseHandler(abc.ABC):
     """
@@ -40,19 +42,24 @@ class RetrieveSingleImageHandler(BaseHandler):
 
 class ImageDimensionHandler(BaseHandler):
 
+    def __init__(self):
+        super().__init__()
+        self.dimensions = constants.DEFAULT_DIMENSIONS
+
+    def set_dimension(self, dimension_key:str):
+        self.dimensions = {dimension_key: constants.DEFAULT_DIMENSIONS[dimension_key]}
+
     def process_input(self, image_io: io.BytesIO):
+        resized_images = []
         image_io.seek(0)
         image = Image.open(image_io)
-        small_image = image.resize((128, 128))
-        medium_image = image.resize((450, 450))
-        large_image = image.resize((960, 960))
-        small_image_io = io.BytesIO()
-        small_image.save(small_image_io, 'png')
-        medium_image_io = io.BytesIO()
-        medium_image.save(medium_image_io, 'png')
-        large_image_io = io.BytesIO()
-        large_image.save(large_image_io, 'png')
-        small_image_io.seek(0)
-        medium_image_io.seek(0)
-        large_image_io.seek(0)
-        return small_image_io, medium_image_io, large_image_io
+        for _, size in self.dimensions.items():
+            resized_image = image.resize(size)
+            resized_image_io = io.BytesIO()
+            resized_image.save(resized_image_io, constants.DEFAULT_IMAGE_FORMAT)
+            resized_image_io.seek(0)
+            resized_images.append(resized_image_io)
+            del resized_image
+        if len(resized_images) == 1:
+            return resized_images[0]
+        return resized_images

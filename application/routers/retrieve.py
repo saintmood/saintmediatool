@@ -24,7 +24,7 @@ async def retrieve_single_image(image_id:str, settings:Settings=Depends(settings
     dimensions_handler = ImageDimensionHandler()
     retrieve_handler.set_next(dimensions_handler)
     try:
-        small, medium, large = retrieve_handler.handle(image_id, settings.media_bucket_name)
+        thumbnail, small, medium, large = retrieve_handler.handle(image_id, settings.media_bucket_name)
     except ClientError:
         return {'status': 'error', 'data': {'message': 'boto3 error'}}
     return {'status': 'success', 'data': {
