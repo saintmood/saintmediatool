@@ -4,6 +4,10 @@ variable "env" {
   default = "dev"
 }
 
+variable "ext_port" {
+  type = list
+}
+
 variable "image" {
   description = "Container Image to use"
   type = map
@@ -11,4 +15,8 @@ variable "image" {
     dev = "sainmtool-dev"
     prod = "saintmtool-prod"
   }
+}
+
+locals {
+  container_count = length(var.ext_port)
 }
