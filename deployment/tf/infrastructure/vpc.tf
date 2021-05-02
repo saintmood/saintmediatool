@@ -88,33 +88,6 @@ resource "aws_route_table_association" "private-subnet-2-association" {
   subnet_id      = aws_subnet.private-subnet-2.id
 }
 
-resource "aws_eip" "elastic-ip-for-nat-gw" {
-  vpc                       = true
-  associate_with_private_ip = "10.0.0.5"
-
-  tags = {
-    Name = "Saintmtool-EIP"
-  }
-}
-
-resource "aws_nat_gateway" "nat-gw" {
-  allocation_id = aws_eip.elastic-ip-for-nat-gw.id
-  depends_on = [
-    aws_eip.elastic-ip-for-nat-gw,
-  ]
-  subnet_id = "aws_subnet.public-subnet-1.id"
-
-  tags = {
-    Name = "Saintmtool-NAT-GW"
-  }
-}
-
-resource "aws_route" "nat-gw-route" {
-  route_table_id         = "aws_route_table.private-route-table.id"
-  nat_gateway_id         = "aws_nat_gateway.nat-gw.id"
-  destination_cidr_block = "0.0.0.0/0"
-}
-
 resource "aws_internet_gateway" "saintmtool-igw" {
   vpc_id = aws_vpc.saintmtool-vpc.id
 
