@@ -22,3 +22,8 @@ variable "private_subnet_1_cidr" {
 variable "private_subnet_2_cidr" {
   description = "Private Saintmtool Subnet 2 Cidr"
 }
+
+variable "saintmtool-alb" {
+  default = "saintmtool-alb"
+  type    = string
+}
