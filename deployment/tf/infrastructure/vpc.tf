@@ -135,3 +135,38 @@ resource "aws_lb_target_group" "saintmtool-web-app-tg" {
   vpc_id                        = aws_vpc.saintmtool-vpc.id
   load_balancing_algorithm_type = "least_outstanding_requests"
 }
+
+resource "aws_acm_certificate" "saintmtool-domain-certificate" {
+  domain_name       = "*.${var.saintmtool-domain}"
+  validation_method = "DNS"
+
+  tags = {
+    Name = "Saintmtool-Certificate"
+  }
+}
+
+data "aws_route53_zone" "saintmtool-domain" {
+  name         = var.saintmtool-domain
+  private_zone = false
+}
+
+resource "aws_route53_record" "saintmtool-cert-validation-record" {
+  for_each = {
+    for dvo in aws_acm_certificate.saintmtool-domain-certificate.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.saintmtool-domain.zone_id
+}
+
+resource "aws_acm_certificate_validation" "saintmtool-domain-certificate-validation" {
+  certificate_arn         = aws_acm_certificate.saintmtool-domain-certificate.arn
+  validation_record_fqdns = [for record in aws_route53_record.saintmtool-cert-validation-record : record.fqdn]
+}

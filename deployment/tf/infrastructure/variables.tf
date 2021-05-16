@@ -27,3 +27,8 @@ variable "saintmtool-alb" {
   default = "saintmtool-alb"
   type    = string
 }
+
+variable "saintmtool-domain" {
+  type    = string
+  default = "saintmtool.net"
+}
