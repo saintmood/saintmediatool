@@ -137,8 +137,11 @@ resource "aws_lb_target_group" "saintmtool-web-app-tg" {
 }
 
 resource "aws_acm_certificate" "saintmtool-domain-certificate" {
-  domain_name       = "*.${var.saintmtool-domain}"
+  domain_name       = var.saintmtool-domain
   validation_method = "DNS"
+  subject_alternative_names = [
+    "api-v1.${var.saintmtool-domain}"
+  ]
 
   tags = {
     Name = "Saintmtool-Certificate"
@@ -169,4 +172,26 @@ resource "aws_route53_record" "saintmtool-cert-validation-record" {
 resource "aws_acm_certificate_validation" "saintmtool-domain-certificate-validation" {
   certificate_arn         = aws_acm_certificate.saintmtool-domain-certificate.arn
   validation_record_fqdns = [for record in aws_route53_record.saintmtool-cert-validation-record : record.fqdn]
+}
+
+resource "aws_launch_template" "saintmtool-launch-template" {
+  name_prefix   = "saintmtool-lt"
+  instance_type = "t3.micro"
+  image_id      = "ami-1a2b3c"
+  cpu_options {
+    core_count       = 1
+    threads_per_core = 2
+  }
+}
+
+resource "aws_autoscaling_group" "saintmtool-autoscaling-group" {
+  desired_capacity    = 1
+  max_size            = 1
+  min_size            = 1
+  vpc_zone_identifier = [aws_subnet.public-subnet-1.id, aws_subnet.public-subnet-2.id]
+
+  launch_template {
+    id      = aws_launch_template.saintmtool-launch-template.id
+    version = "$Latest"
+  }
 }
