@@ -182,6 +182,7 @@ resource "aws_launch_template" "saintmtool-launch-template" {
     core_count       = 1
     threads_per_core = 2
   }
+  user_data = ""
 }
 
 resource "aws_autoscaling_group" "saintmtool-autoscaling-group" {
