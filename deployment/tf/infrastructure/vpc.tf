@@ -122,18 +122,28 @@ resource "aws_alb_listener" "saintmtool-alb-listener" {
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate.saintmtool-domain-certificate.arn
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.saintmtool-web-app-tg.arn
+    target_group_arn = aws_alb_target_group.saintmtool-web-app-tg.arn
   }
+
+  depends_on = [
+    aws_alb_target_group.saintmtool-web-app-tg
+  ]
 }
 
-resource "aws_lb_target_group" "saintmtool-web-app-tg" {
+resource "aws_alb_target_group" "saintmtool-web-app-tg" {
+  name                          = "sainmtool-webapp-tg"
   port                          = 80
   protocol                      = "HTTP"
   vpc_id                        = aws_vpc.saintmtool-vpc.id
   load_balancing_algorithm_type = "least_outstanding_requests"
+
+  tags = {
+    Name = "Saintmtool-Webapp-TG"
+  }
 }
 
 resource "aws_acm_certificate" "saintmtool-domain-certificate" {
@@ -174,6 +184,18 @@ resource "aws_acm_certificate_validation" "saintmtool-domain-certificate-validat
   validation_record_fqdns = [for record in aws_route53_record.saintmtool-cert-validation-record : record.fqdn]
 }
 
+resource "aws_route53_record" "saintmtool-alb-record" {
+  name    = var.saintmtool-domain
+  type    = "A"
+  zone_id = data.aws_route53_zone.saintmtool-domain.zone_id
+
+  alias {
+    evaluate_target_health = false
+    name                    = aws_alb.saintmtool-alb.dns_name
+    zone_id                 = aws_alb.saintmtool-alb.zone_id
+  }
+}
+
 resource "aws_launch_template" "saintmtool-launch-template" {
   name_prefix   = "saintmtool-lt"
   instance_type = "t3.micro"
@@ -190,6 +212,7 @@ resource "aws_autoscaling_group" "saintmtool-autoscaling-group" {
   max_size            = 1
   min_size            = 1
   vpc_zone_identifier = [aws_subnet.public-subnet-1.id, aws_subnet.public-subnet-2.id]
+  target_group_arns   = [aws_alb_target_group.saintmtool-web-app-tg.arn]
 
   launch_template {
     id      = aws_launch_template.saintmtool-launch-template.id
