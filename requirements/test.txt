@@ -5,3 +5,4 @@ faker
 moto
 coverage
 pylint
+mypy
