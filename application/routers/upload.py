@@ -1,3 +1,5 @@
+from typing import Dict
+
 import boto3
 from application.internal import utils
 from botocore.exceptions import ClientError
@@ -9,7 +11,7 @@ router = APIRouter(prefix='/upload')
 
 
 @router.post('/images/', status_code=201)
-async def upload_image(upload:UploadFile=File(...), settings:Settings=Depends(settings)):
+async def upload_image(upload:UploadFile=File(...), settings:Settings=Depends(settings)) -> Dict[str, str]:
     s3_client = boto3.client('s3')
     bucket_name = settings.media_bucket_name
     image_filename = utils.generate_s3_key()

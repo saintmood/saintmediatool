@@ -12,7 +12,6 @@ class TestSettings(Settings):
     media_bucket_name: str = 'test_saintmtool'
 
 
-
 def settings() -> Settings:
     return Settings()
 
