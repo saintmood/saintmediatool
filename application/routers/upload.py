@@ -1,9 +1,10 @@
 from typing import Dict
 
 import boto3
-from application.internal import utils
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, File, UploadFile
+
+from application.internal import utils
 
 from ..settings import Settings, settings
 

@@ -3,3 +3,4 @@ uvicorn[standard]
 Pillow
 python-multipart
 boto3
+aiofiles
