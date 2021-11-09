@@ -12,7 +12,7 @@ resource "aws_vpc" "saintmtool_vpc" {
 }
 
 resource "aws_internet_gateway" "saintmtool_igw" {
-  vpc_id = aws_vpc.saintmtool-vpc.id
+  vpc_id = aws_vpc.saintmtool_vpc.id
 
   tags = {
     Name = "Saintmtool-IGW"
@@ -27,7 +27,7 @@ data "aws_availability_zones" "available_azs" {
 resource "aws_subnet" "public_subnets" {
   for_each = var.public_subnets
 
-  vpc_id = aws_vpc.saintmtool-vpc.id
+  vpc_id = aws_vpc.saintmtool_vpc.id
   availability_zone = [
     for az in data.aws_availability_zones.available_azs.names :
     az
@@ -43,7 +43,7 @@ resource "aws_subnet" "public_subnets" {
 resource "aws_subnet" "private_subnets" {
   for_each = var.private_subnets
 
-  vpc_id = aws_vpc.saintmtool-vpc.id
+  vpc_id = aws_vpc.saintmtool_vpc.id
   availability_zone = [
     for az in data.aws_availability_zones.available_azs.names :
     az
@@ -57,21 +57,20 @@ resource "aws_subnet" "private_subnets" {
 }
 
 resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.saintmtool-vpc.id
+  vpc_id = aws_vpc.saintmtool_vpc.id
   tags = {
     Name = "Public-Route-Table"
   }
+}
 
-  route = [
-    {
-      cidr_block = "0.0.0.0/0"
-      gateway_id = aws_internet_gateway.saintmtool_igw.id
-    },
-  ]
+resource "aws_route" "igw_route" {
+  route_table_id         = aws_route_table.public_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.saintmtool_igw.id
 }
 
 resource "aws_route_table" "private_route_table" {
-  vpc_id = aws_vpc.saintmtool-vpc.id
+  vpc_id = aws_vpc.saintmtool_vpc.id
   tags = {
     Name = "Private-Route-Table"
   }
@@ -80,14 +79,14 @@ resource "aws_route_table" "private_route_table" {
 resource "aws_route_table_association" "public_subnets" {
   for_each = var.public_subnets
 
-  route_table_id = aws_route_table.public-route-table.id
+  route_table_id = aws_route_table.public_route_table.id
   subnet_id      = aws_subnet.public_subnets[each.key].id
 }
 
 resource "aws_route_table_association" "private_subnets" {
   for_each = var.private_subnets
 
-  route_table_id = aws_route_table.public-route-table.id
+  route_table_id = aws_route_table.private_route_table.id
   subnet_id      = aws_subnet.private_subnets[each.key].id
 }
 
@@ -126,7 +125,7 @@ resource "aws_alb_target_group" "saintmtool_web_app_tg" {
   name                          = "sainmtool-webapp-tg"
   port                          = 80
   protocol                      = "HTTP"
-  vpc_id                        = aws_vpc.saintmtool-vpc.id
+  vpc_id                        = aws_vpc.saintmtool_vpc.id
   load_balancing_algorithm_type = "least_outstanding_requests"
 
   tags = {
