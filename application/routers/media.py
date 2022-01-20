@@ -6,13 +6,17 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 
 from application.internal import utils
-from application.internal.handlers import RetrieveSingleImageHandler, ImageDimensionHandler
+from application.internal.handlers import (
+    RetrieveSingleImageHandler,
+    ImageDimensionHandler,
+)
 from ..settings import Settings, settings
 
 router = APIRouter(prefix='/media')
 
+
 @router.get('/images/{image_id}/')
-async def get_single_image(image_id:str, settings:Settings=Depends(settings)):
+async def get_single_image(image_id: str, settings: Settings = Depends(settings)):
     # @TODO splitting symbol should be a constant
     try:
         image_id, dimension = image_id.split('_')

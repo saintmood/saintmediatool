@@ -21,11 +21,15 @@ class ImageGetTestCase(BaseTestCase):
         conn.create_bucket(Bucket=self.settings.media_bucket_name)
         test_image = fixtures.create_test_image()
         s3_client = boto3.client('s3')
-        s3_client.upload_fileobj(test_image, self.settings.media_bucket_name, expected_image_id)
+        s3_client.upload_fileobj(
+            test_image, self.settings.media_bucket_name, expected_image_id
+        )
 
         response = self.client.get(
-            self.endpoint_url.format(image_id=expected_image_id + '_' + expected_image_dimension),
-            headers={'AuthToken': 'sometokenvalue'}
+            self.endpoint_url.format(
+                image_id=expected_image_id + '_' + expected_image_dimension
+            ),
+            headers={'AuthToken': 'sometokenvalue'},
         )
         self.assertEqual(response.status_code, 200)
 
@@ -37,11 +41,15 @@ class ImageGetTestCase(BaseTestCase):
         conn.create_bucket(Bucket=self.settings.media_bucket_name)
         test_image = fixtures.create_test_image()
         s3_client = boto3.client('s3')
-        s3_client.upload_fileobj(test_image, self.settings.media_bucket_name, expected_image_id)
+        s3_client.upload_fileobj(
+            test_image, self.settings.media_bucket_name, expected_image_id
+        )
 
         response = self.client.get(
-            self.endpoint_url.format(image_id=expected_image_id + '!' + expected_image_dimension),
-            headers={'AuthToken': 'sometokenvalue'}
+            self.endpoint_url.format(
+                image_id=expected_image_id + '!' + expected_image_dimension
+            ),
+            headers={'AuthToken': 'sometokenvalue'},
         )
         self.assertEqual(response.status_code, 200)
         resp_json = response.json()

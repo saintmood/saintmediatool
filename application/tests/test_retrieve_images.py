@@ -16,10 +16,10 @@ class ImagesRetriveTestCase(BaseTestCase):
     @mock_s3
     def test_retrive_images_success(self):
         response = self.client.get(
-            self.endpoint_url,
-            headers={'AuthToken': 'sometokenvalue'}
+            self.endpoint_url, headers={'AuthToken': 'sometokenvalue'}
         )
         self.assertEqual(response.status_code, 200)
+
 
 class ImageRetriveTestCase(BaseTestCase):
 
@@ -32,11 +32,13 @@ class ImageRetriveTestCase(BaseTestCase):
         conn.create_bucket(Bucket=self.settings.media_bucket_name)
         test_image = fixtures.create_test_image()
         s3_client = boto3.client('s3')
-        s3_client.upload_fileobj(test_image, self.settings.media_bucket_name, expected_image_id)
+        s3_client.upload_fileobj(
+            test_image, self.settings.media_bucket_name, expected_image_id
+        )
 
         response = self.client.get(
             self.endpoint_url.format(image_id=expected_image_id),
-            headers={'AuthToken': 'sometokenvalue'}
+            headers={'AuthToken': 'sometokenvalue'},
         )
         self.assertEqual(response.status_code, 200)
         resp_json = response.json()
@@ -53,7 +55,7 @@ class ImageRetriveTestCase(BaseTestCase):
 
         response = self.client.get(
             self.endpoint_url.format(image_id=expected_image_id),
-            headers={'AuthToken': 'sometokenvalue'}
+            headers={'AuthToken': 'sometokenvalue'},
         )
         self.assertEqual(response.status_code, 200)
         resp_json = response.json()

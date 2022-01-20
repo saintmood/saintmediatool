@@ -9,8 +9,8 @@ from application.internal import constants
 
 class BaseHandler(abc.ABC):
     """
-        Define parent for all handlers.
-        This is another implementation of "Chain Of Command" patter.
+    Define parent for all handlers.
+    This is another implementation of "Chain Of Command" patter.
     """
 
     def __init__(self):
@@ -31,7 +31,6 @@ class BaseHandler(abc.ABC):
 
 
 class RetrieveSingleImageHandler(BaseHandler):
-
     def process_input(self, image_uuid: str, butcket_name: str):
         s3 = boto3.resource('s3')
         bucket = s3.Bucket(butcket_name)
@@ -41,12 +40,11 @@ class RetrieveSingleImageHandler(BaseHandler):
 
 
 class ImageDimensionHandler(BaseHandler):
-
     def __init__(self):
         super().__init__()
         self.dimensions = constants.DEFAULT_DIMENSIONS
 
-    def set_dimension(self, dimension_key:str):
+    def set_dimension(self, dimension_key: str):
         self.dimensions = {dimension_key: constants.DEFAULT_DIMENSIONS[dimension_key]}
 
     def process_input(self, image_io: io.BytesIO):
