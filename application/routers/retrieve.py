@@ -9,6 +9,8 @@ from application.internal.handlers import (
     RetrieveSingleImageHandler,
     ImageDimensionHandler,
 )
+
+from application.types import Picture, PictureUrls
 from ..settings import Settings, settings
 
 router = APIRouter(prefix='/retrieve')
@@ -32,11 +34,9 @@ async def retrieve_single_image(image_id: str, settings: Settings = Depends(sett
         )
     except ClientError:
         return {'status': 'error', 'data': {'message': 'boto3 error'}}
+    picture_urls = PictureUrls(large_url=large, medium_url=medium, small_url=small, thumb_url=thumbnail)
+    picture = Picture(urls=picture_urls)
     return {
         'status': 'success',
-        'data': {
-            'small': base64.b64encode(small.read()),
-            'medium': base64.b64encode(medium.read()),
-            'large': base64.b64encode(large.read()),
-        },
+        'data': picture
     }
