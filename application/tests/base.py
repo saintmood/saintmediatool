@@ -6,7 +6,7 @@ from application.main import app
 from application.settings import settings, test_settings
 
 
-class BaseTestCase(unittest.TestCase):
+class BaseTestCase(unittest.IsolatedAsyncioTestCase):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.settings = None

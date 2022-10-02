@@ -11,4 +11,19 @@ class PictureUrls:
 
 @dataclass
 class Picture:
+    image_id: str
     urls: PictureUrls
+
+
+@dataclass
+class ResizeMap:
+    large_width: int = 1400
+    medium_width: int = 700
+    small_width: int = 300
+    thumb_width: int = 100
+
+
+@dataclass
+class Response:
+    data: None
+    status: str

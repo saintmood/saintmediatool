@@ -3,8 +3,8 @@ from unittest import mock
 import boto3
 from moto import mock_s3
 
-from application.routers import upload
 from application.tests import fixtures
+from application.types import ResizeMap
 
 from .base import BaseTestCase
 
@@ -32,4 +32,4 @@ class ImageUploadTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 201)
         resp_json = response.json()
         self.assertEqual(resp_json['status'], 'success')
-        self.assertEqual(resp_json['url'], expected_url)
+        self.assertEqual(resp_json['data']['image_id'], picture_aws_key)
