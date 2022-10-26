@@ -1,10 +1,18 @@
+import io
+from typing import Collection, Optional
+
 from wand import image
 
-from application.internal import utils
 from application.types import ResizeMap
 
 
-async def resize_image(picture_io, resize_map: ResizeMap):
+def resize_image(picture_io, resize_map: ResizeMap, specific_width: Optional[int] = None) -> Collection[io.BytesIO]:
+    if specific_width is not None:
+        with (image.Image(file=picture_io) as picture,
+              picture.clone() as resized_picture
+        ):
+            resized_picture.transform(resize=f'{specific_width}x')
+            return resized_picture.make_blob(format='png')
     with (
         image.Image(file=picture_io) as picture,
         picture.clone() as large_picture,

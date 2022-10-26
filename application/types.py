@@ -10,9 +10,14 @@ class PictureUrls:
 
 
 @dataclass
+class Image:
+    bytestr: bytes
+
+
+@dataclass
 class Picture:
-    image_id: str
-    urls: PictureUrls
+    picture_id: str
+    picture_urls: PictureUrls
 
 
 @dataclass

@@ -28,7 +28,7 @@ async def upload_image(
         thumb_url=resource_url + 'thumb/'
     )
     picture = Picture(
-        image_id=image_key,
-        urls=picture_urls
+        picture_id=image_key,
+        picture_urls=picture_urls
     )
     return Response(status='success', data=picture)

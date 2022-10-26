@@ -1,16 +1,17 @@
-import base64
+import io
+from typing import Collection
 
 import boto3
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends
 
-from application.internal import utils
 from application.internal.handlers import (
     RetrieveSingleImageHandler,
     ImageDimensionHandler,
 )
 
-from application.types import Picture, PictureUrls
+from application.types import Image, Picture, PictureUrls, Response
+
 from ..settings import Settings, settings
 
 router = APIRouter(prefix='/retrieve')
@@ -24,19 +25,20 @@ async def retrieve_images(settings: Settings = Depends(settings)):
 
 
 @router.get('/images/{image_id}/')
-async def retrieve_single_image(image_id: str, settings: Settings = Depends(settings)):
+async def retrieve_single_picture(image_id: str, settings: Settings = Depends(settings)):
     retrieve_handler = RetrieveSingleImageHandler()
-    dimensions_handler = ImageDimensionHandler()
-    retrieve_handler.set_next(dimensions_handler)
     try:
-        thumbnail, small, medium, large = retrieve_handler.handle(
-            image_id, settings.media_bucket_name
-        )
+        retrieve_handler.handle(image_id, settings.media_bucket_name)
     except ClientError:
         return {'status': 'error', 'data': {'message': 'boto3 error'}}
-    picture_urls = PictureUrls(large_url=large, medium_url=medium, small_url=small, thumb_url=thumbnail)
-    picture = Picture(urls=picture_urls)
-    return {
-        'status': 'success',
-        'data': picture
-    }
+    resource_url = f'https://{settings.domain}/media/pictures/{image_id}/'
+    picture = Picture(
+        picture_id=image_id,
+        picture_urls=PictureUrls(
+            large_url=resource_url + 'large/',
+            medium_url=resource_url + 'medium/',
+            small_url=resource_url + 'small/',
+            thumb_url=resource_url + 'thumb/'
+        )
+    )
+    return Response(status="success", data=picture)

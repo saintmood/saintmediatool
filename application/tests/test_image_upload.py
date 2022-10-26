@@ -32,4 +32,4 @@ class ImageUploadTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 201)
         resp_json = response.json()
         self.assertEqual(resp_json['status'], 'success')
-        self.assertEqual(resp_json['data']['image_id'], picture_aws_key)
+        self.assertEqual(resp_json['data']['picture_id'], picture_aws_key)
