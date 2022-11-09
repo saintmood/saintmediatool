@@ -1,9 +1,6 @@
-from unittest import mock
-
 import boto3
 from moto import mock_s3
 
-from application.routers import upload
 from application.tests import fixtures
 
 from .base import BaseTestCase

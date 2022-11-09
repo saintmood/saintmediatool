@@ -4,7 +4,6 @@ import boto3
 from moto import mock_s3
 
 from application.tests import fixtures
-from application.types import ResizeMap
 
 from .base import BaseTestCase
 
@@ -21,9 +20,9 @@ class ImageUploadTestCase(BaseTestCase):
         conn = boto3.resource('s3')
         conn.create_bucket(Bucket=self.settings.media_bucket_name)
         test_image = fixtures.create_test_image()
-        expected_url = (
-            f'https://{self.settings.domain}/media/pictures/{picture_aws_key}/'
-        )
+        # expected_url = (
+        #     f'https://{self.settings.domain}/media/pictures/{picture_aws_key}/'
+        # )
         response = self.client.post(
             self.endpoint_url,
             headers={'AuthToken': 'sometokenvalue'},

@@ -10,7 +10,7 @@ def resize_image(picture_io, resize_map: ResizeMap, specific_width: Optional[int
     if specific_width is not None:
         with (image.Image(file=picture_io) as picture,
               picture.clone() as resized_picture
-        ):
+              ):
             resized_picture.transform(resize=f'{specific_width}x')
             return resized_picture.make_blob(format='png')
     with (

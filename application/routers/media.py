@@ -1,11 +1,9 @@
 import io
 
-import boto3
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 
-from application.internal import utils
 from application.internal.handlers import (
     RetrieveSingleImageHandler,
     ImageDimensionHandler,

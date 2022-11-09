@@ -5,7 +5,6 @@ from typing import Collection, Optional, Union
 import boto3
 
 from application import types
-from application.internal import constants
 from application.tasks.resize_image import resize_image
 
 
