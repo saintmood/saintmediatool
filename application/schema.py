@@ -12,7 +12,8 @@ class Picture(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
     pictures = graphene.List(Picture)
-    picture = graphene.Field(Picture, picture_id=graphene.String(required=True))
+    picture = graphene.Field(
+        Picture, picture_id=graphene.String(required=True))
 
     async def resolve_pictures(root, info):
         return [{'id': 'uuid', 'small_url': 'https://saintmtool.net/'}]

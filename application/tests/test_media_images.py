@@ -1,9 +1,6 @@
-from unittest import mock
-
 import boto3
 from moto import mock_s3
 
-from application.routers import upload
 from application.tests import fixtures
 
 from .base import BaseTestCase
@@ -11,7 +8,7 @@ from .base import BaseTestCase
 
 class ImageGetTestCase(BaseTestCase):
 
-    endpoint_url = '/media/images/{image_id}/'
+    endpoint_url = '/media/pictures/{picture_id}/{dimension}/'
 
     @mock_s3
     def test_get_image_small_dimension_success(self):
@@ -27,7 +24,7 @@ class ImageGetTestCase(BaseTestCase):
 
         response = self.client.get(
             self.endpoint_url.format(
-                image_id=expected_image_id + '_' + expected_image_dimension
+                picture_id=expected_image_id, dimension=expected_image_dimension
             ),
             headers={'AuthToken': 'sometokenvalue'},
         )
@@ -47,7 +44,8 @@ class ImageGetTestCase(BaseTestCase):
 
         response = self.client.get(
             self.endpoint_url.format(
-                image_id=expected_image_id + '!' + expected_image_dimension
+                picture_id=expected_image_id + '!' + expected_image_dimension,
+                dimension='small'
             ),
             headers={'AuthToken': 'sometokenvalue'},
         )

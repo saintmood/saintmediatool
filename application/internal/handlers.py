@@ -1,10 +1,11 @@
 import abc
 import io
+from typing import Collection, Optional, Union
 
 import boto3
-from PIL import Image
 
-from application.internal import constants
+from application import types
+from application.tasks.resize_image import resize_image
 
 
 class BaseHandler(abc.ABC):
@@ -40,24 +41,14 @@ class RetrieveSingleImageHandler(BaseHandler):
 
 
 class ImageDimensionHandler(BaseHandler):
-    def __init__(self):
-        super().__init__()
-        self.dimensions = constants.DEFAULT_DIMENSIONS
 
-    def set_dimension(self, dimension_key: str):
-        self.dimensions = {dimension_key: constants.DEFAULT_DIMENSIONS[dimension_key]}
+    def __init__(self, dimension: Optional[str] = None) -> None:
+        self.dimension = dimension
 
-    def process_input(self, image_io: io.BytesIO):
-        resized_images = []
-        image_io.seek(0)
-        image = Image.open(image_io)
-        for _, size in self.dimensions.items():
-            resized_image = image.resize(size)
-            resized_image_io = io.BytesIO()
-            resized_image.save(resized_image_io, constants.DEFAULT_IMAGE_FORMAT)
-            resized_image_io.seek(0)
-            resized_images.append(resized_image_io)
-            del resized_image
-        if len(resized_images) == 1:
-            return resized_images[0]
+    def process_input(self, picture_io: io.BytesIO) -> Collection[io.BytesIO]:
+        picture_io.seek(0)
+        resize_map = types.ResizeMap()
+        resize_width = getattr(resize_map, f'{self.dimension}_width')
+        resized_images: Union[Collection[io.BytesIO], io.BytesIO] = resize_image(
+            picture_io, resize_map, specific_width=resize_width)
         return resized_images

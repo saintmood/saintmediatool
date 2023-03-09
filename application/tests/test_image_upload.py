@@ -3,7 +3,6 @@ from unittest import mock
 import boto3
 from moto import mock_s3
 
-from application.routers import upload
 from application.tests import fixtures
 
 from .base import BaseTestCase
@@ -21,9 +20,9 @@ class ImageUploadTestCase(BaseTestCase):
         conn = boto3.resource('s3')
         conn.create_bucket(Bucket=self.settings.media_bucket_name)
         test_image = fixtures.create_test_image()
-        expected_url = (
-            f'https://{self.settings.domain}/media/pictures/{picture_aws_key}/'
-        )
+        # expected_url = (
+        #     f'https://{self.settings.domain}/media/pictures/{picture_aws_key}/'
+        # )
         response = self.client.post(
             self.endpoint_url,
             headers={'AuthToken': 'sometokenvalue'},
@@ -32,4 +31,4 @@ class ImageUploadTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 201)
         resp_json = response.json()
         self.assertEqual(resp_json['status'], 'success')
-        self.assertEqual(resp_json['url'], expected_url)
+        self.assertEqual(resp_json['data']['picture_id'], picture_aws_key)

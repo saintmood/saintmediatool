@@ -1,9 +1,6 @@
-from unittest import mock
-
 import boto3
 from moto import mock_s3
 
-from application.routers import upload
 from application.tests import fixtures
 
 from .base import BaseTestCase
@@ -43,9 +40,9 @@ class ImageRetriveTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         resp_json = response.json()
         self.assertEqual(resp_json['status'], 'success')
-        self.assertIsNotNone(resp_json['data']['small'])
-        self.assertIsNotNone(resp_json['data']['medium'])
-        self.assertIsNotNone(resp_json['data']['large'])
+        self.assertIsNotNone(resp_json['data']['picture_urls']['small_url'])
+        self.assertIsNotNone(resp_json['data']['picture_urls']['medium_url'])
+        self.assertIsNotNone(resp_json['data']['picture_urls']['large_url'])
 
     @mock_s3
     def test_retrive_single_image_not_found_error(self):
